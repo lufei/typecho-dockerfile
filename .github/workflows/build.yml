@@ -151,3 +151,360 @@ jobs:
             CONFIG=${{ steps.generate.outputs.CONFIG }}
             PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
             PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_php_debian:
+    concurrency: build_debian_82
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o debian php
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_cli_debian:
+    concurrency: build_debian_82
+    runs-on: ubuntu-22.04
+    needs:
+        - build_82_php_debian
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o debian cli
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_fpm_debian:
+    concurrency: build_debian_82
+    runs-on: ubuntu-22.04
+    needs:
+        - build_82_cli_debian
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o debian fpm
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_apache_debian:
+    concurrency: build_debian_82
+    runs-on: ubuntu-22.04
+    needs:
+        - build_82_fpm_debian
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o debian apache
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_74_php_alpine:
+    concurrency: build_alpine_74
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 7.4 -o alpine php
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_74_cli_alpine:
+    concurrency: build_alpine_74
+    runs-on: ubuntu-22.04
+    needs:
+        - build_74_php_alpine
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 7.4 -o alpine cli
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_74_fpm_alpine:
+    concurrency: build_alpine_74
+    runs-on: ubuntu-22.04
+    needs:
+        - build_74_cli_alpine
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 7.4 -o alpine fpm
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_php_alpine:
+    concurrency: build_alpine_82
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o alpine php
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_cli_alpine:
+    concurrency: build_alpine_82
+    runs-on: ubuntu-22.04
+    needs:
+        - build_82_php_alpine
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o alpine cli
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
+  build_82_fpm_alpine:
+    concurrency: build_alpine_82
+    runs-on: ubuntu-22.04
+    needs:
+        - build_82_cli_alpine
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate Dockerfile
+        id: generate
+        run: |
+          ./build.sh -g -v ${{ github.event.inputs.version }} -p 8.2 -o alpine fpm
+        env:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ steps.generate.outputs.PLATFORM }}
+          push: true
+          tags: ${{ steps.generate.outputs.VERSION }}
+          build-args: |
+            TAG=${{ steps.generate.outputs.TAG }}
+            URL=${{ steps.generate.outputs.URL }}
+            CONFIG=${{ steps.generate.outputs.CONFIG }}
+            PHP_EXTENSION=${{ steps.generate.outputs.PHP_EXTENSION }}
+            PHP8_SOCKETS_WORKAROUND=${{ steps.generate.outputs.PHP8_SOCKETS_WORKAROUND }}
